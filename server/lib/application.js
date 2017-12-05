@@ -1,0 +1,85 @@
+const Router = require('koa-router');
+const { getLegalPath, getResponseFormat } = require('./util');
+const _ = require('lodash');
+
+module.exports = class Application {
+  constructor(routerArr) {
+    this._routers = this._loadRoutes(routerArr);
+    this.routerInstance = new Router();
+  }
+
+  _loadControllers() {
+    this._routers.forEach(router => {
+      router._invoke = async (ctx, action) => {
+        let _instance = new router.controller(
+          ctx,
+          router.controller._path,
+          action,
+          getResponseFormat(ctx)
+        );
+        if (await _instance.before_filters()) {
+          await _instance[action]();
+          await _instance.after_filters();
+        } else {
+          ctx.status = 403;
+          ctx.body = 'Unauthorized';
+        }
+      };
+    });
+  }
+
+  _loadRoutes(routerArr) {
+    let routers = [];
+    routerArr.forEach(_router => {
+      _router.traverse(routers);
+    });
+
+    return routers;
+  }
+
+  routes() {
+    console.log(
+      `\tVerb \t${_.padEnd('URL Path', 40)} \t   \t${_.padEnd(
+        'Controller',
+        20
+      )} \t${_.padEnd('Action', 10)}`
+    );
+    this._routers.forEach(_router => {
+      console.log(
+        `\t${_router.method.toUpperCase()} \t${_.padEnd(
+          _router.path,
+          40
+        )} \t=> \t${_.padEnd(_router.controller.name, 20)} \t${_router.action}`
+      );
+    });
+  }
+
+  run() {
+    this._loadControllers();
+
+    this._routers.forEach(_router => {
+      if (_router.path.length > 1) {
+        ['.html', '.json'].forEach(format => {
+          this.routerInstance[_router.method](
+            _router.path + format,
+            async (ctx, next) => {
+              await _router._invoke(ctx, _router.action);
+              await next();
+            }
+          );
+        });
+      } else {
+        this.routerInstance[_router.method](_router.path, async (ctx, next) => {
+          await _router._invoke(ctx, _router.action);
+          await next();
+        });
+      }
+    });
+
+    return async (ctx, next) => {
+      if (ctx.path.length > 1)
+        ctx.path = `${getLegalPath(ctx.path)}.${getResponseFormat(ctx)}`;
+      await this.routerInstance.routes()(ctx, next);
+    };
+  }
+};

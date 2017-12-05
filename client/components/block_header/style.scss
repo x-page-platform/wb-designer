@@ -1,0 +1,19 @@
+.block-header-wrap {
+  width: 100%;
+  background-color: #f7f7f7;
+  height: 28px;
+  line-height: 28px;
+  padding: 0 10px;
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+
+  .block-tools {
+    text-align: right;
+    display: inline;
+    float: right;
+    line-height: 28px;
+    li:hover {
+      cursor: pointer;
+    }
+  }
+}

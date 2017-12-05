@@ -1,0 +1,13 @@
+@import '~normalize.css';
+@import '~antd/dist/antd.css';
+
+li {
+  list-style: none;
+}
+.ant-layout {
+  background-color: white;
+
+  .ant-layout-sider {
+    background-color: #f3f3f3;
+  }
+}
