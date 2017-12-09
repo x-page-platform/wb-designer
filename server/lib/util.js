@@ -1,6 +1,12 @@
 const _ = require('lodash');
+const config =
+  require(`../config/environments/${process.env['NODE_ENV'] ||
+    'development'}`) || {};
 
 module.exports = {
+  getConfig(key) {
+    return config[key];
+  },
   getController(entity) {
     return _.capitalize(_.camelCase(entity)) + 'Controller';
   },

@@ -1,25 +1,26 @@
 const BaseController = require('../lib/base_controller');
+const JWTService = require('../services/jwt');
 
 class ApplicationController extends BaseController {
-  async global() {
-    return {
-      user: {
-        name: 'lh'
-      }
-    }
-  }
-  async before_filters() {
-    if (['index'].includes(this.action)) {
-      this.ctx.body = '403....by filter';
-      return false;
+  async _before_filters() {
+    try {
+      let userInfo = await new JWTService(this.ctx).decode(
+        this.ctx.cookies.get('sessionId')
+      );
+      if (!userInfo) this.ctx.redirect('/login');
+
+      this.setGlobal({
+        userInfo
+      });
+    } catch (e) {
+      this.ctx.redirect('/login');
     }
     return true;
   }
 
-  async after_filters() {
-    this.ctx.body = this.ctx.body + ' append from after';
+  async _after_filters() {
+    // this.ctx.body = this.ctx.body + ' append from after';
   }
-
 }
 
 module.exports = ApplicationController;

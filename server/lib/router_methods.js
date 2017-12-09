@@ -150,7 +150,7 @@ function Root(controller, action) {
   rootNode.addAction(
     new ActionNode({
       method: 'get',
-      path: '/',
+      path: '',
       controller,
       action
     })

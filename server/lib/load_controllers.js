@@ -1,32 +1,32 @@
 const fs = require('fs');
 const path = require('path');
+const _ = require('lodash');
 const { getController } = require('./util');
 
-function dirTree(fileName) {
-  var stats = fs.lstatSync(fileName),
-    info = {};
+function dirTree(fileName, parentNode = {}) {
+  var stats = fs.lstatSync(fileName);
 
   if (stats.isDirectory()) {
+    let dirName = _.capitalize(path.basename(fileName));
+    parentNode[dirName] = {};
+
     let children = fs.readdirSync(fileName).map(function(child) {
       return dirTree(fileName + '/' + child);
     });
-    let childrenObj = {};
-    children.forEach(child => {
-      let name = Object.keys(child)[0];
-      childrenObj[getController(name)] = child[name];
-    });
 
-    info[path.basename(fileName)] = childrenObj;
+    children.forEach(child => {
+      Object.assign(parentNode[dirName], child);
+    });
   } else {
     let klass = require(fileName);
     klass._path = fileName.slice(
       path.resolve(__dirname, '../controllers').length,
       -3
     );
-    info[path.basename(fileName).slice(0, -3)] = klass;
+    parentNode[getController(path.basename(fileName).slice(0, -3))] = klass;
   }
 
-  return info;
+  return parentNode;
 }
 
-module.exports = dirTree(path.resolve(__dirname, '../controllers')).controllers;
+module.exports = dirTree(path.resolve(__dirname, '../controllers')).Controllers;

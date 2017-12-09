@@ -1,3 +1,26 @@
 .page-nav-container {
   border-right: 1px solid #e8e8e8;
 }
+.current-user {
+  height: 100%;
+  float: right;
+
+  img {
+    line-height: 100%;
+    height: 30px;
+    margin-right: 10px;
+    vertical-align: middle;
+    border-radius: 15px;
+  }
+  a {
+    display: inline-block;
+    padding: 0 10px;
+    height: 100%;
+    color: white;
+    text-decoration: none;
+
+    &:hover {
+      background-color: #545353;
+    }
+  }
+}

@@ -13,7 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "antd": "^2.13.10",
+    "axios": "^0.17.1",
     "ejs": "^2.5.7",
+    "jsonwebtoken": "^8.1.0",
     "koa": "^2.4.1",
     "koa-mount": "^3.0.0",
     "koa-router": "^7.3.0",

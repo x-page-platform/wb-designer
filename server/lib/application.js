@@ -17,9 +17,9 @@ module.exports = class Application {
           action,
           getResponseFormat(ctx)
         );
-        if (await _instance.before_filters()) {
+        if (await _instance._before_filters()) {
           await _instance[action]();
-          await _instance.after_filters();
+          await _instance._after_filters();
         } else {
           ctx.status = 403;
           ctx.body = 'Unauthorized';
