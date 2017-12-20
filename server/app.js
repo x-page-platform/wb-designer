@@ -25,5 +25,5 @@ app.on('error', (err, ctx) => {
 });
 
 app.listen(9999, () => {
-  console.log('listen 9999');
+  console.log('started http://127.0.0.1:9999');
 });

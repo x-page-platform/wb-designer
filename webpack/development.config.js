@@ -44,7 +44,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['react', 'es2015']
+            presets: ['react']
           }
         }
       },
@@ -52,6 +52,10 @@ module.exports = {
         test: /\.scss$/,
         exclude: /node_modules/,
         use: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
+      },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract(['css-loader'])
       }
     ]
   },
@@ -64,6 +68,11 @@ module.exports = {
     new ExtractTextPlugin({
       filename: getPath => getPath('css/[name].css').replace('css/js', 'css'),
       allChunks: true
+    }),
+    new webpack.HashedModuleIdsPlugin({
+      hashFunction: 'sha256',
+      hashDigest: 'hex',
+      hashDigestLength: 20
     })
   ]
 };
